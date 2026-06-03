@@ -1,123 +1,148 @@
 import re
-import json
-import os
+from usuario import Usuario, GerenciadorUsuarios
+from interface import Interface
 
-dados_usuarios = "usuarios.json"
 
-def carregar_usuarios():
-    if not os.path.exists(dados_usuarios) or os.path.getsize(dados_usuarios) == 0:
-        return []
-    with open(dados_usuarios, "r") as f:
-        return json.load(f)
-
-def salvar_usuarios(usuarios):
-    with open(dados_usuarios, "w") as f:
-        json.dump(usuarios, f, indent=4)
-
-def criar_nome():
-    while True:
-        nome = input("Digite seu nome: ").strip()
+class ValidadorDados:
+    
+    
+    PADRAO_EMAIL = r'^[a-zA-Z]+\.[a-zA-Z]+@ufrpe\.br$'
+    TAM_MIN_NOME = 3
+    TAM_MAX_NOME = 100
+    TAM_MIN_SENHA = 6
+    
+    @staticmethod
+    def validar_nome(nome):
+       
+        nome = nome.strip()
         if not nome:
-            print("O nome não pode ser vazio. Tente novamente.\n")
-            continue
+            return False, "O nome não pode ser vazio."
         if not nome.replace(" ", "").isalpha():
-            print("O nome só pode conter letras. Tente novamente.\n")
-            continue
-        if len(nome) < 3:
-            print("O nome deve ter no mínimo 3 caracteres. Tente novamente.\n")
-            continue
-        if len(nome) > 100:
-            print("O nome deve ter no máximo 100 caracteres. Tente novamente.\n")
-            continue
-        return nome
-
-def criar_email():
-    while True:
-        email = input("Digite seu email: ").strip()
+            return False, "O nome só pode conter letras."
+        if len(nome) < ValidadorDados.TAM_MIN_NOME:
+            return False, f"O nome deve ter no mínimo {ValidadorDados.TAM_MIN_NOME} caracteres."
+        if len(nome) > ValidadorDados.TAM_MAX_NOME:
+            return False, f"O nome deve ter no máximo {ValidadorDados.TAM_MAX_NOME} caracteres."
+        return True, "OK"
+    
+    @staticmethod
+    def validar_email(email):
+       
+        email = email.strip()
         if not email:
-            print("O email não pode ser vazio. Tente novamente.\n")
-            continue
-        padrao_email = r'^[a-zA-Z]+\.[a-zA-Z]+@ufrpe\.br$'
-        if not re.match(padrao_email, email):
-            print("Email inválido. Tente novamente.\n")
-            continue
-        return email
-
-def criar_senha():
-    while True:
-        senha = input("Digite sua senha: ")
+            return False, "O email não pode ser vazio."
+        if not re.match(ValidadorDados.PADRAO_EMAIL, email):
+            return False, "Email inválido. Use formato: nome.sobrenome@ufrpe.br"
+        return True, "OK"
+    
+    @staticmethod
+    def validar_senha(senha):
+      
         if not senha:
-            print("A senha não pode ser vazia. Tente novamente.\n")
-            continue
-        if len(senha) < 6:
-            print("A senha deve ter pelo menos 6 caracteres. Tente novamente.\n")
-            continue
-        return senha
+            return False, "A senha não pode ser vazia."
+        if len(senha) < ValidadorDados.TAM_MIN_SENHA:
+            return False, f"A senha deve ter pelo menos {ValidadorDados.TAM_MIN_SENHA} caracteres."
+        return True, "OK"
 
-def selecionar_modalidade():
-    while True:
-        print("Selecione sua modalidade:")
-        print("[1] Masculino")
-        print("[2] Feminino")
-        print("[0] voltar\n")
-        modalidade = input("Escolha uma opção: ")
-        if modalidade == "1":
-            return "Masculino"
-        elif modalidade == "2":
-            return "Feminino"
-        elif modalidade == "0":
-            return None
-        else:
-            print("Opção inválida. Tente novamente.\n")
+
+class Cadastro:
     
-def escolher_funcao():
-    while True:
-        print("Escolha sua função:")
-        print("[1] Atleta")
-        print("[2] Técnico")
-        print("[0] voltar\n")
-        funcao = input("Escolha uma opção: ")
-        if funcao == "1":
-            return "Atleta"
-        elif funcao == "2":
-            return "Técnico"
-        elif funcao == "0":
-            return None
-        else:
-            print("Opção inválida. Tente novamente.\n")
-
-
-def fazer_cadastro():
-    print( "_" * 50 )
-    print("FAÇA SEU CADASTRO\n")
-    print( "_" * 50 )
-
-    nome = criar_nome()
     
-    while True:
-        email = criar_email()
-        senha = criar_senha()
-        modalidade = selecionar_modalidade()
+    def __init__(self):
+        self.gerenciador = GerenciadorUsuarios()
+        self.validador = ValidadorDados()
+    
+    def pedir_nome(self):
         
-        if modalidade is None:
-            continue
+        while True:
+            nome = input("Digite seu nome: ")
+            valido, mensagem = self.validador.validar_nome(nome)
+            if valido:
+                return nome.strip()
+            print(f"{mensagem}\n")
+    
+    def pedir_email(self):
         
-        funcao = escolher_funcao()
+        while True:
+            email = input("Digite seu email: ")
+            valido, mensagem = self.validador.validar_email(email)
+            if not valido:
+                print(f"{mensagem}\n")
+                continue
+            if self.gerenciador.usuario_existe(email.strip()):
+                print("Este email já está cadastrado.\n")
+                continue
+            return email.strip()
+    
+    def pedir_senha(self):
         
-        if funcao is None:
-            continue
+        while True:
+            senha = input("Digite sua senha: ")
+            valido, mensagem = self.validador.validar_senha(senha)
+            if valido:
+                return senha
+            print(f"{mensagem}\n")
+    
+    def pedir_modalidade(self):
         
-        usuarios = carregar_usuarios()
-        usuarios.append({
-            "nome": nome,
-            "email": email,
-            "senha": senha,
-            "esporte": "",
-            "modalidade": modalidade,
-            "funcao": funcao
-        })
-        salvar_usuarios(usuarios)
-
-        print("Cadastro realizado com sucesso!")
-        break
-
+        while True:
+            print("Selecione sua modalidade:")
+            print("[1] Masculino")
+            print("[2] Feminino")
+            print("[0] voltar\n")
+            escolha = input("Escolha uma opção: ")
+            
+            if escolha == "1":
+                return "Masculino"
+            elif escolha == "2":
+                return "Feminino"
+            elif escolha == "0":
+                return None
+            else:
+                print("Opção inválida. Tente novamente.\n")
+    
+    def pedir_funcao(self):
+        
+        while True:
+            print("Escolha sua função:")
+            print("[1] Atleta")
+            print("[2] Técnico")
+            print("[0] voltar\n")
+            escolha = input("Escolha uma opção: ")
+            
+            if escolha == "1":
+                return "Atleta"
+            elif escolha == "2":
+                return "Técnico"
+            elif escolha == "0":
+                return None
+            else:
+                print("Opção inválida. Tente novamente.\n")
+    
+    def fazer_cadastro(self):
+        
+        print("_" * 50)
+        print("FAÇA SEU CADASTRO\n")
+        print("_" * 50)
+        
+        nome = self.pedir_nome()
+        
+        while True:
+            email = self.pedir_email()
+            senha = self.pedir_senha()
+            modalidade = self.pedir_modalidade()
+            
+            if modalidade is None:
+                continue
+            
+            funcao = self.pedir_funcao()
+            
+            if funcao is None:
+                continue
+            
+            # Criar novo usuário e salvar
+            novo_usuario = Usuario(nome, email, senha, modalidade, funcao)
+            self.gerenciador.adicionar_usuario(novo_usuario)
+            
+            Interface.exibir_e_aguardar("\n✓ Cadastro realizado com sucesso!")
+            break
