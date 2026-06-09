@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "esporte": "Futsal",
+        "data": "15/06/2026 as 13h",
+        "limite": 2,
+        "inscritos": [
+            "adad.adad@ufrpe.br"
+        ],
+        "email_treinador": "obob.obob@ufrpe.br"
+    }
+]

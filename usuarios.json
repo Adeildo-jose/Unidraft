@@ -1,18 +1,34 @@
 [
     {
+<<<<<<< Updated upstream
         "nome": "tester",
         "email": "tester.tester@ufrpe.br",
         "senha": "tester",
         "esporte": "",
+=======
+        "nome": "adad",
+        "email": "adad.adad@ufrpe.br",
+        "senha": "adad10",
+        "esporte": "Futsal",
+>>>>>>> Stashed changes
         "modalidade": "Masculino",
         "funcao": "Atleta"
     },
     {
+<<<<<<< Updated upstream
         "nome": "kaua",
         "email": "kaua.kaua@ufrpe.br",
         "senha": "kaua12",
         "esporte": "T\u00eanis de Mesa",
         "modalidade": "Feminino",
         "funcao": "Atleta"
+=======
+        "nome": "obob",
+        "email": "obob.obob@ufrpe.br",
+        "senha": "obob10",
+        "esporte": "Futsal",
+        "modalidade": "Masculino",
+        "funcao": "T\u00e9cnico"
+>>>>>>> Stashed changes
     }
 ]
