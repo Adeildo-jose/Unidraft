@@ -42,6 +42,12 @@ class ValidadorDados:
             return False, "A senha não pode ser vazia."
         if len(senha) < ValidadorDados.TAM_MIN_SENHA:
             return False, f"A senha deve ter pelo menos {ValidadorDados.TAM_MIN_SENHA} caracteres."
+        if not any(c.isupper() for c in senha):
+            return False, "A senha deve conter pelo menos 1 letra maiúscula."
+        if not any(c.isdigit() for c in senha):
+            return False, "A senha deve conter pelo menos 1 número."
+        if not any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in senha):
+            return False, "A senha deve conter pelo menos 1 caractere especial (!@#$%^&*()_+-=[]{}|;:,.<>?)."
         return True, "OK"
 
 
@@ -86,7 +92,7 @@ class Cadastro:
     def pedir_modalidade(self):
         
         while True:
-            print("Selecione sua modalidade:")
+            print("\nSelecione sua modalidade:")
             print("[1] Masculino")
             print("[2] Feminino")
             print("[0] voltar\n")
@@ -140,7 +146,6 @@ class Cadastro:
             if funcao is None:
                 continue
             
-            # Criar novo usuário e salvar
             novo_usuario = Usuario(nome, email, senha, modalidade, funcao)
             self.gerenciador.adicionar_usuario(novo_usuario)
             

@@ -1,0 +1,18 @@
+[
+    {
+        "nome": "Adeildo Jos\u00e9",
+        "email": "Adeildo.fragoso@ufrpe.br",
+        "senha": "Adeildo123.",
+        "esporte": "",
+        "modalidade": "Masculino",
+        "funcao": "Atleta"
+    },
+    {
+        "nome": "Adeildo",
+        "email": "adeildo.fragoso@ufrpe.br",
+        "senha": "Adeildo123.",
+        "esporte": "Atletismo",
+        "modalidade": "Masculino",
+        "funcao": "T\u00e9cnico"
+    }
+]

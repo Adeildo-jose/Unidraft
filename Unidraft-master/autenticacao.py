@@ -1,4 +1,4 @@
-import getpass
+import pwinput
 from usuario import  GerenciadorUsuarios
 from cadastro import ValidadorDados
 from interface import Interface
@@ -31,7 +31,7 @@ class Autenticacao:
     def pedir_senha(self):
        
         while True:
-            senha = getpass.getpass("Digite sua senha: ")
+            senha = pwinput.pwinput(prompt='Digite sua senha: ', mask='*')
             
             valido, mensagem = self.validador.validar_senha(senha)
             if not valido:
@@ -95,7 +95,7 @@ class Autenticacao:
                 Interface.exibir_e_aguardar(f" {mensagem}")
         
         elif opcao == "2":
-            nova_senha = getpass.getpass("Digite a nova senha: ")
+            nova_senha = pwinput.pwinput("Digite a nova senha: ")
             valido, mensagem = self.validador.validar_senha(nova_senha)
             if valido:
                 self.usuario_logado.senha = nova_senha
@@ -142,7 +142,6 @@ class Autenticacao:
             Interface.exibir_e_aguardar(" Opção inválida!")
     
     def excluir_conta(self):
-        """Permite ao usuário logado excluir sua conta"""
         if self.usuario_logado is None:
             print("Nenhum usuário logado!")
             return False
